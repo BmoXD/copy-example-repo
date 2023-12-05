@@ -75,18 +75,20 @@ def mysql_check_if_ast_exists_in_db(request_day, ast_id):
 		pass
 	return records[0][0]
 
-# Asteroid value insert
+# Function that inserts Astreoid in DB
 def mysql_insert_ast_into_db(create_date, hazardous, name, url, diam_min, diam_max, ts, dt_utc, dt_local, speed, distance, ast_id):
 	cursor = get_cursor()
 	try:
 		cursor = connection.cursor()
-		result  = cursor.execute( "INSERT INTO `ast_daily` (`create_date`, `hazardous`, `name`, `url`, `diam_min`, `diam_max`, `ts`, `dt_utc`, `dt_local`, `speed`, `distance`, `ast_id`) VALUES ('" + str(create_date) + "', '" + str(hazardous) + "', '" + str(name) + "', '" + str(url) + "', '" + str(diam_min) + "', '" + str(diam_max) + "', '" + str(ts) + "', '" + str(dt_utc) + "', '" + str(dt_local) + "', '" + str(speed) + "', '" + str(distance) + "', '" + str(ast_id) + "')")
+		result  = cursor.exec
+ute( "INSERT INTO `ast_daily` (`create_date`, `hazardous`, `name`, `url`, `diam_min`, `diam_max`, `ts`, `dt_utc`, `dt_local`, `speed`, `distance`, `ast_id`) VALUES ('" + str(create_date) + "', '" + str(hazardous) + "', '" + str(name) + "', '" + str(url) + "', '" + str(diam_min) + "', '" + str(diam_max) + "', '" + str(ts) + "', '" + str(dt_utc) + "', '" + str(dt_local) + "', '" + str(speed) + "', '" + str(distance) + "', '" + str(ast_id) + "')")
 		connection.commit()
 	except Error as e :
 		logger.error( "INSERT INTO `ast_daily` (`create_date`, `hazardous`, `name`, `url`, `diam_min`, `diam_max`, `ts`, `dt_utc`, `dt_local`, `speed`, `distance`, `ast_id`) VALUES ('" + str(create_date) + "', '" + str(hazardous) + "', '" + str(name) + "', '" + str(url) + "', '" + str(diam_min) + "', '" + str(diam_max) + "', '" + str(ts) + "', '" + str(dt_utc) + "', '" + str(dt_local) + "', '" + str(speed) + "', '" + str(distance) + "', '" + str(ast_id) + "')")
 		logger.error('Problem inserting asteroid values into DB: ' + str(e))
 		pass
 
+# Function that checks if  asteroids are in DB if not then save
 def push_asteroids_arrays_to_db(request_day, ast_array, hazardous):
 	for asteroid in ast_array:
 		if mysql_check_if_ast_exists_in_db(request_day, asteroid[9]) == 0:
@@ -110,7 +112,7 @@ if __name__ ==  "__main__":
 			db_Info = connection.get_server_info()
 			logger.info('Connected to MySQL database. MySQL Server version on ' + str(db_Info))
 			cursor = connection.cursor()
-			cursor.execute("select database();")
+m			cursor.execute("select database();")
 			record = cursor.fetchone()
 			logger.debug('Your connected to - ' + str(record))
 			connection.commit()
@@ -120,16 +122,16 @@ if __name__ ==  "__main__":
 	# Getting todays date
 	dt = datetime.now()
 	request_date = str(dt.year) + "-" + str(dt.month).zfill(2) + "-" + str(dt.day).zfill(2)  
-	print("Generated today's date: " + str(request_date))
+0	print("Generated today's date: " + str(request_date))
 
 	#Send an api request to NASA for today's astreoid information 
 	print("Request url: " + str(nasa_api_url + "rest/v1/feed?start_date=" + request_date + "&end_date=" + request_date + "&api_key=" + nasa_api_key))
 	r = requests.get(nasa_api_url + "rest/v1/feed?start_date=" + request_date + "&end_date=" + request_date + "&api_key=" + nasa_api_key)
 
 	# Printing API response data. For debugging!
-	print("Response status code: " + str(r.status_code))
-	print("Response headers: " + str(r.headers))
-	print("Response content: " + str(r.text))
+	#print("Response status code: " + str(r.status_code))
+	#print("Response headers: " + str(r.headers))
+	#print("Response content: " + str(r.text))
 
 	# Check if API returned succesfuly. Check if response code is 200
 	if r.status_code == 200:
